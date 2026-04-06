@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Edit Course - SMS{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Edit Course</h1>
+    <a href="/courses" class="btn btn-secondary">← Back</a>
+</div>
+<div class="form-card">
+    <form method="POST">
+        <div class="form-group">
+            <label>Course Name *</label>
+            <input type="text" name="name" required value="{{ course.name }}">
+        </div>
+        <div class="form-group">
+            <label>Course Code *</label>
+            <input type="text" name="code" required value="{{ course.code }}">
+        </div>
+        <div class="form-group">
+            <label>Credits</label>
+            <select name="credits">
+                {% for cr in [1,2,3,4] %}
+                <option value="{{ cr }}" {% if course.credits == cr %}selected{% endif %}>{{ cr }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Instructor</label>
+            <input type="text" name="instructor" value="{{ course.instructor }}">
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="/courses" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

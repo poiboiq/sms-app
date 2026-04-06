@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard - Student Management System{% endblock %}
+{% block content %}
+<div style="margin-bottom:2rem;">
+    <h1 style="font-family:'Syne',sans-serif;font-size:2rem;font-weight:800;margin-bottom:6px;">
+        Welcome to <span style="color:var(--accent)">SMS</span>
+    </h1>
+    <p style="color:var(--muted)">Student Management System — COMSATS University Islamabad</p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card s1">
+        <div class="stat-label">Total Students</div>
+        <div class="stat-value">{{ students_count }}</div>
+        <a href="/students" style="font-size:0.8rem;color:var(--accent);text-decoration:none;margin-top:8px;display:inline-block;">View all →</a>
+    </div>
+    <div class="stat-card s2">
+        <div class="stat-label">Total Courses</div>
+        <div class="stat-value">{{ courses_count }}</div>
+        <a href="/courses" style="font-size:0.8rem;color:var(--accent2);text-decoration:none;margin-top:8px;display:inline-block;">View all →</a>
+    </div>
+    <div class="stat-card s3">
+        <div class="stat-label">Total Enrollments</div>
+        <div class="stat-value">{{ enrollments_count }}</div>
+        <a href="/enrollments" style="font-size:0.8rem;color:var(--accent3);text-decoration:none;margin-top:8px;display:inline-block;">View all →</a>
+    </div>
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;">
+    <a href="/students/add" class="btn btn-primary" style="justify-content:center;padding:1rem;">+ Add Student</a>
+    <a href="/courses/add" class="btn btn-secondary" style="justify-content:center;padding:1rem;">+ Add Course</a>
+    <a href="/enrollments/add" class="btn btn-secondary" style="justify-content:center;padding:1rem;">+ Add Enrollment</a>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Enrollments - SMS{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Enrollments</h1>
+    <a href="/enrollments/add" class="btn btn-primary">+ Add Enrollment</a>
+</div>
+<div class="table-wrap">
+    {% if enrollments %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Course</th>
+                <th>Code</th>
+                <th>Grade</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in enrollments %}
+            <tr>
+                <td style="color:var(--muted)">{{ e.id }}</td>
+                <td><strong>{{ e.student_name }}</strong><br><small style="color:var(--muted)">{{ e.email }}</small></td>
+                <td>{{ e.course_name }}</td>
+                <td><span class="badge badge-green">{{ e.code }}</span></td>
+                <td>
+                    {% if e.grade %}
+                    <span class="badge badge-purple">{{ e.grade }}</span>
+                    {% else %}
+                    <span style="color:var(--muted)">—</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="/enrollments/delete/{{ e.id }}" class="btn btn-danger btn-sm" onclick="return confirm('Remove this enrollment?')">Remove</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+        <h3>No enrollments yet</h3>
+        <p>Enroll a student in a course to get started</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

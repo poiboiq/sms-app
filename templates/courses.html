@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Courses - SMS{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Courses</h1>
+    <a href="/courses/add" class="btn btn-primary">+ Add Course</a>
+</div>
+<div class="table-wrap">
+    {% if courses %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Course Name</th>
+                <th>Code</th>
+                <th>Credits</th>
+                <th>Instructor</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in courses %}
+            <tr>
+                <td style="color:var(--muted)">{{ c.id }}</td>
+                <td><strong>{{ c.name }}</strong></td>
+                <td><span class="badge badge-green">{{ c.code }}</span></td>
+                <td>{{ c.credits }} cr</td>
+                <td>{{ c.instructor }}</td>
+                <td>
+                    <div style="display:flex;gap:8px;">
+                        <a href="/courses/edit/{{ c.id }}" class="btn btn-secondary btn-sm">Edit</a>
+                        <a href="/courses/delete/{{ c.id }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this course?')">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+        <h3>No courses yet</h3>
+        <p>Add your first course to get started</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

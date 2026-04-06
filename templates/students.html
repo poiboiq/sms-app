@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Students - SMS{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Students</h1>
+    <a href="/students/add" class="btn btn-primary">+ Add Student</a>
+</div>
+
+<div class="table-wrap">
+    {% if students %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Department</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            <tr>
+                <td style="color:var(--muted)">{{ s.id }}</td>
+                <td><strong>{{ s.name }}</strong></td>
+                <td style="color:var(--muted)">{{ s.email }}</td>
+                <td>{{ s.phone }}</td>
+                <td><span class="badge badge-purple">{{ s.department }}</span></td>
+                <td>
+                    <div style="display:flex;gap:8px;">
+                        <a href="/students/edit/{{ s.id }}" class="btn btn-secondary btn-sm">Edit</a>
+                        <a href="/students/delete/{{ s.id }}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this student?')">Delete</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="empty">
+        <h3>No students yet</h3>
+        <p>Add your first student to get started</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
