@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  web:
+    image: python:3.11-slim
+    container_name: sms-web-jenkins
+    ports:
+      - "8090:5000"
+    environment:
+      - DB_HOST=db-jenkins
+      - DB_USER=smsuser
+      - DB_PASSWORD=smspassword123
+      - DB_NAME=smsdb
+    volumes:
+      - /var/jenkins_home/workspace/sms-pipeline:/app
+    working_dir: /app
+    command: sh -c "pip install -r requirements.txt && python app.py"
+    depends_on:
+      db-jenkins:
+        condition: service_healthy
+    restart: always
+
+  db-jenkins:
+    image: mysql:8.0
+    container_name: sms-db-jenkins
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword123
+      - MYSQL_DATABASE=smsdb
+      - MYSQL_USER=smsuser
+      - MYSQL_PASSWORD=smspassword123
+    volumes:
+      - sms_db_data_jenkins:/var/lib/mysql
+      - /var/jenkins_home/workspace/sms-pipeline/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "smsuser", "-psmspassword123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+volumes:
+  sms_db_data_jenkins:

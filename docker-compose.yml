@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    image: YOUR_DOCKERHUB_USERNAME/sms-app:latest
+    container_name: sms-web
+    ports:
+      - "80:5000"
+    environment:
+      - DB_HOST=db
+      - DB_USER=smsuser
+      - DB_PASSWORD=smspassword123
+      - DB_NAME=smsdb
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: sms-db
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword123
+      - MYSQL_DATABASE=smsdb
+      - MYSQL_USER=smsuser
+      - MYSQL_PASSWORD=smspassword123
+    volumes:
+      - sms_db_data:/var/lib/mysql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "smsuser", "-psmspassword123"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+volumes:
+  sms_db_data:
