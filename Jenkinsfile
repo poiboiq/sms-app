@@ -1,50 +1,32 @@
 pipeline {
     agent any
-
-    environment {
-        COMPOSE_FILE = 'docker-compose-jenkins.yml'
-    }
-
     stages {
         stage('Clone Repository') {
             steps {
-                echo 'Cloning repository from GitHub...'
-                git branch: 'main',
-                    url: 'https://github.com/poiboiq/sms-app.git'
+                git branch: 'main', url: 'https://github.com/poiboiq/sms-app.git'
             }
         }
-
         stage('Stop Previous Containers') {
             steps {
-                echo 'Stopping any previously running containers...'
-                sh 'docker-compose -f ${COMPOSE_FILE} down || true'
+                sh 'docker stop sms-web-jenkins sms-db-jenkins 2>/dev/null || true'
+                sh 'docker rm -f sms-web-jenkins sms-db-jenkins 2>/dev/null || true'
+                sh 'docker network rm sms-pipeline_default 2>/dev/null || true'
             }
         }
-
         stage('Build and Deploy') {
             steps {
-                echo 'Building and deploying containerized application...'
-                sh 'docker-compose -f ${COMPOSE_FILE} up -d --build'
+                sh 'cp -r /var/lib/jenkins/workspace/sms-pipeline/* /opt/sms-app/'
+                sh 'cd /opt/sms-app && docker-compose -f docker-compose-jenkins.yml up -d'
             }
         }
-
-        stage('Verify Deployment') {
+        stage('Verify') {
             steps {
-                echo 'Waiting for containers to be ready...'
-                sh 'sleep 15'
-                sh 'docker ps'
-                echo 'Deployment successful!'
+                sh 'sleep 15 && docker ps'
             }
         }
     }
-
     post {
-        success {
-            echo 'Pipeline completed successfully! SMS app is running.'
-        }
-        failure {
-            echo 'Pipeline failed. Check logs above.'
-            sh 'docker-compose -f ${COMPOSE_FILE} logs || true'
-        }
+        success { echo 'SMS app running on port 8090!' }
+        failure { echo 'Pipeline failed. Check logs.' }
     }
 }
