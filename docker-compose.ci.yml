@@ -1,0 +1,52 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: sms-ci-db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword123
+      MYSQL_DATABASE: smsdb
+      MYSQL_USER: smsuser
+      MYSQL_PASSWORD: smspassword123
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "smsuser", "-psmspassword123"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  web:
+    build: .
+    container_name: sms-ci-web
+    environment:
+      DB_HOST: db
+      DB_USER: smsuser
+      DB_PASSWORD: smspassword123
+      DB_NAME: smsdb
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost/', timeout=5)"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+
+  chrome:
+    image: selenium/standalone-chrome:latest
+    container_name: sms-ci-chrome
+    shm_size: 2gb
+
+  tests:
+    build: ./selenium-tests
+    container_name: sms-ci-tests
+    environment:
+      BASE_URL: http://web
+      SELENIUM_REMOTE_URL: http://chrome:4444/wd/hub
+    volumes:
+      - ./selenium-tests/reports:/tests/reports
+    depends_on:
+      web:
+        condition: service_healthy
+      chrome:
+        condition: service_started
